@@ -27,9 +27,9 @@ def main():
         "--isolated_perturbation_ratios", "0,0.1", "--isolated_perturbation_repeats", "1",
         "--out_dir", output / "training",
     ]
-    run("train-dvs", *common, "--channels", "2", "--blocks", "1")
+    run("train-dvs", *common, "--channels", "2")
     run("train-shd", *common, "--hidden_dim", "8", "--hidden_layers", "1")
-    run("train-stmnist", *common, "--channels", "2", "--blocks", "1")
+    run("train-stmnist", *common, "--channels", "2")
     run(
         "ablate", "--datasets", "shd", "--variants", "constant_release,memory_free",
         *common[:-2], "--hidden_dim", "8", "--out_dir", output / "ablation",
