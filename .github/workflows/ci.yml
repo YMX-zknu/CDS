@@ -1,0 +1,36 @@
+name: Python checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  cpu-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      MPLBACKEND: Agg
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install CPU environment
+        run: |
+          python -m pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r requirements.txt
+      - name: Verify imports
+        run: python scripts/check_environment.py
+      - name: Run regression checks
+        run: python -m unittest discover -s tests -v
+      - name: Exercise synthetic training and analysis
+        run: python scripts/smoke_test.py
+      - name: Exercise all twelve TIFF exports
+        run: python run.py visualize --dry_run --dpi 150 --output_dir results/visualization_smoke
