@@ -1,10 +1,12 @@
 # CDS · Calcium-modulated dynamic synapses
 
+[![Python checks](https://github.com/YMX-zknu/CDS/actions/workflows/ci.yml/badge.svg)](https://github.com/YMX-zknu/CDS/actions/workflows/ci.yml)
+
 Implementation of **Calcium-modulated dynamic synapses enable temporal context-dependent transmission in spiking neural networks**.
 
 CDS uses a decaying calcium state to modulate synaptic release before neuronal integration. This repository contains the mechanism experiments, matched static/CDS sensory-task experiments, component ablations, input visualizations and checkpoint-based propagation analyses.
 
-**Start here:** [Installation](#1-install-the-environment) → [Data](#3-prepare-the-datasets) → [Training](#5-train-the-sensory-task-models) → [Analysis](#8-analyze-network-wide-propagation).
+**Start here:** [Installation](#1-install-the-environment) → [Data](#3-data-preparation) → [Training](#5-train-the-sensory-task-models) → [Analysis](#8-analyze-network-wide-propagation).
 
 ## 1. Install the environment
 
@@ -37,7 +39,7 @@ python -m pip install -r requirements.txt
 python scripts/check_environment.py
 ```
 
-The dependency pins define the repository setup. They are not a recovered lockfile from the original training machine. The scripts use the legacy SpikingJelly `activation_based` API, so use the pinned release rather than upgrading SpikingJelly independently. See [PyTorch's official installation commands](https://pytorch.org/get-started/previous-versions/) for other CUDA builds.
+The pinned CPU environment is validated by GitHub Actions using Python 3.11. Full dataset training requires the data preparation below. The scripts use the legacy SpikingJelly `activation_based` API, so use the pinned release rather than upgrading SpikingJelly independently. See [PyTorch's official installation commands](https://pytorch.org/get-started/previous-versions/) for other CUDA builds.
 
 Run the commands below **from the repository root**. Relative data and output paths are interpreted from the working directory. For headless servers:
 
@@ -63,21 +65,25 @@ python run.py visualize --dry_run --dpi 150 --output_dir results/visualization_s
 
 The visualization dry run uses synthetic arrays and a NumPy perturbation analogue. Real-data visualizations use the actual task preprocessing and perturbation implementation.
 
-## 3. Prepare the datasets
+## 3. Data Preparation
 
 Datasets and pretrained checkpoints are not bundled with this source release. Download datasets from their original providers and retain their terms of use. Detailed layouts and preprocessing are described in [docs/datasets.md](docs/datasets.md).
 
-| Dataset | Modality | Default root | Processed sample |
+| Dataset | Official download | Default root | Processed sample |
 |---|---|---|---|
-| DVS-Gesture | Vision | `data/DVS-Gesture` | 10 × 2 × 128 × 128 |
-| SHD | Audition | `data/SHD` | 100 × 700 |
-| ST-MNIST | Touch | `data/ST-MNIST` | 30 × 2 × 10 × 10 |
+| DVS-Gesture · vision | [IBM dataset files](https://ibm.ent.box.com/s/3hiq58ww1pbbjrinh367ykfdf60xsfm8/folder/50167556794) | `data/DVS-Gesture` | 10 × 2 × 128 × 128 |
+| SHD · audition | [Zenke Lab dataset page](https://zenkelab.org/resources/spiking-heidelberg-datasets-shd/) · [Data files](https://zenkelab.org/datasets/) | `data/SHD` | 100 × 700 |
+| ST-MNIST · touch | [NUS ScholarBank dataset](https://scholarbank.nus.edu.sg/handle/10635/168106) | `data/ST-MNIST` | 30 × 2 × 10 × 10 |
 
 ```bash
 mkdir -p data/DVS-Gesture data/SHD data/ST-MNIST
 ```
 
-DVS-Gesture and SHD are loaded through SpikingJelly. ST-MNIST must be extracted locally so that `data_submission/<label>/*.mat` exists under its root. The first run may take additional time to extract or preprocess data.
+1. **DVS-Gesture:** manually download `DvsGesture.tar.gz`, `gesture_mapping.csv`, `LICENSE.txt` and `README.txt` from the IBM folder. Place all four files in `data/DVS-Gesture/download/`. SpikingJelly then checks and extracts them and builds the frame cache.
+2. **SHD:** the loader can download its archives automatically. For offline preparation, download the training and test HDF5 archives from Zenke Lab, extract them, and place `shd_train.h5` and `shd_test.h5` in `data/SHD/extract/`.
+3. **ST-MNIST:** download and extract the NUS archive under `data/ST-MNIST/`, retaining `data_submission/<numeric-label>/*.mat`. The local reader builds the frame cache and fixed class-stratified split.
+
+These are the dataset sources listed in the manuscript's Data availability statement. Dataset roots must be writable for extraction and caching. See [the detailed preparation instructions](docs/datasets.md) for file layouts and preprocessing.
 
 ## 4. Run the mechanism experiments
 
@@ -141,7 +147,7 @@ python run.py train-shd \
 
 Results are stored as `results/section_2_6/<dataset>/seed_<seed>/`, with `checkpoints/static.pt`, `checkpoints/cds.pt` and a `logs/` directory. Reusing the same dataset, seed and output root overwrites that run's checkpoints. Use a different output root for exploratory configurations.
 
-Always pass `--seeds` explicitly when reproducing a particular set of runs. The original two-seed launcher default is retained for compatibility; the commands here request three independent runs. Perturbation realizations are averaged within each training seed before means and sample standard deviations are computed across seeds.
+Both multi-seed launchers default to **2026, 2027 and 2028**. Each seed corresponds to an independent training run. Perturbation realizations are averaged within each training seed before means and sample standard deviations are computed across the three seeds.
 
 ## 6. Run component ablations
 
@@ -239,15 +245,6 @@ Outputs include operation counts, transmission-weighted propagation, release sel
 | `scripts/` | Environment and synthetic execution checks |
 | `tests/` | Command routing, perturbation and model regression checks |
 | `docs/` | Dataset preparation and reproducibility details |
-
-## Troubleshooting
-
-- **CUDA unavailable:** run `python scripts/check_environment.py`; choose the matching PyTorch build and driver. Use `--device cpu --num_workers 0` for small checks.
-- **Missing dataset:** check [dataset layouts](docs/datasets.md) and the relevant root argument. Downloads require network access; ST-MNIST extraction is manual.
-- **Missing/incompatible checkpoint:** analyze the same output root and seeds used for training. Protocol and architecture checks deliberately reject incompatible files.
-- **Insufficient isolated positions:** read the reported realized fraction. Do not silently relax the isolation guard to obtain a desired result. Use matching settings across comparisons and record any change.
-- **Worker errors on non-Linux platforms:** use `--num_workers 0`.
-- **Long first run:** dataset extraction and frame-cache generation precede training; keep their generated directories for subsequent runs.
 
 ## License and attribution
 

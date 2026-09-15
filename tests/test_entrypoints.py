@@ -35,6 +35,7 @@ class EntryPointTests(unittest.TestCase):
         spec.loader.exec_module(module)
         with patch.object(sys, "argv", ["launcher"]):
             self.assertFalse(module.parse_args().with_ablation)
+            self.assertEqual(module.parse_args().seeds, "2026,2027,2028")
         with patch.object(sys, "argv", ["launcher", "--with_ablation"]):
             self.assertTrue(module.parse_args().with_ablation)
 
@@ -46,6 +47,7 @@ class EntryPointTests(unittest.TestCase):
         spec.loader.exec_module(module)
         with patch.object(sys, "argv", ["launcher"]):
             root = Path(module.parse_args().section_2_6_code_dir)
+            self.assertEqual(module.parse_args().seeds, "2026,2027,2028")
         for dataset in ("dvsgesture", "shd", "stmnist"):
             self.assertTrue((root / f"section_2_6_{dataset}_train.py").is_file())
 

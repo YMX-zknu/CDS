@@ -4,9 +4,9 @@ Paths below are relative to the repository root. Dataset files and preprocessing
 
 ## DVS-Gesture
 
-Obtain the original DVS128 Gesture dataset from [IBM's dataset repository](https://github.com/IBM/DvsGesture). The loader is `spikingjelly.datasets.dvs128_gesture.DVS128Gesture` from the pinned SpikingJelly release.
+Download the original dataset from the [IBM DVS-Gesture folder](https://ibm.ent.box.com/s/3hiq58ww1pbbjrinh367ykfdf60xsfm8/folder/50167556794), as linked in the manuscript. The loader is `spikingjelly.datasets.dvs128_gesture.DVS128Gesture` from the pinned SpikingJelly release.
 
-Place the provider's `DvsGesture.tar.gz` archive in `data/DVS-Gesture/download/`. Follow any additional file/checksum instructions printed by SpikingJelly if required. The loader extracts the archive, converts events and creates its frame cache. Alternatively, point `--data_root` at an existing compatible SpikingJelly dataset root.
+Place all four provider files in `data/DVS-Gesture/download/`: `DvsGesture.tar.gz`, `gesture_mapping.csv`, `LICENSE.txt` and `README.txt`. The pinned loader requires these files and verifies their checksums. DVS-Gesture download is manual. The loader extracts the archive, converts events and creates its frame cache. Alternatively, point `--data_root` at an existing compatible SpikingJelly dataset root.
 
 The repository uses the provider's training/test split. `--delta_t 125` integrates 125 ms windows and `--T 10` retains ten frames, padding shorter samples with zeros. The sample layout is `[T, 2, 128, 128]`. The data root must be writable for extraction and cache generation.
 
@@ -17,12 +17,12 @@ python run.py train-dvs --data_root data/DVS-Gesture --device cuda:0
 
 ## Spiking Heidelberg Digits (SHD)
 
-Use the [Zenke Lab dataset page](https://zenkelab.org/resources/spiking-heidelberg-datasets-shd/) for the official data and usage information.
+Use the [Zenke Lab dataset page](https://zenkelab.org/resources/spiking-heidelberg-datasets-shd/) for the official data and usage information. The [download directory](https://zenkelab.org/datasets/) contains the SHD training and test archives. Download SHD, not the separate SSC dataset.
 
-SpikingJelly loads SHD events and can download/extract the files if the provider is reachable. For offline use, put the extracted `shd_train.h5` and `shd_test.h5` files in `data/SHD/events_h5/`. The repository's `SHDEventsToFrames` transform integrates each sample into 100 equal-duration bins across that sample's event duration, preserving empty bins, then divides by the sample's maximum count. The resulting shape is `[100, 700]`.
+SpikingJelly loads SHD events and can download/extract its `.h5.zip` archives if the provider is reachable. For manually downloaded `.h5.gz` archives, decompress them before placing the resulting `.h5` files in the directory below. For offline use, put the extracted `shd_train.h5` and `shd_test.h5` files in `data/SHD/extract/`. The repository's `SHDEventsToFrames` transform integrates each sample into 100 equal-duration bins across that sample's event duration, preserving empty bins, then divides by the sample's maximum count. The resulting shape is `[100, 700]`.
 
 ```bash
-mkdir -p data/SHD/events_h5
+mkdir -p data/SHD/extract
 python run.py train-shd --data_root data/SHD --device cuda:0
 ```
 

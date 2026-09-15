@@ -33,7 +33,7 @@ def execute(command, section_2_6_code_dir=None):
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--seeds", default="2026,2027")
+    p.add_argument("--seeds", default="2026,2027,2028")
     p.add_argument("--dvsgesture_root", default="data/DVS-Gesture")
     p.add_argument("--shd_root", default="data/SHD")
     p.add_argument("--stmnist_root", default="data/ST-MNIST")

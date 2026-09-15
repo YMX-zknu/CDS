@@ -8,7 +8,7 @@ The section organization is retained because it makes the numerical analyses tra
 
 ## Running and recording experiments
 
-- Pass training seeds explicitly. The README examples request `2026,2027,2028`; each is a separate training run.
+- Pass training seeds explicitly. Both multi-seed launchers and the README examples use `2026,2027,2028`; each is a separate training run.
 - Main comparisons use paired static/CDS networks, with each trainer's default preprocessing, architecture and optimization settings.
 - Each saved checkpoint is selected by the maximum test accuracy during training. This is the supplied checkpoint-selection procedure.
 - Nonzero perturbation ratios use three realizations. Average within each training seed before computing the mean and sample standard deviation across seeds. Realizations do not count as additional independent training runs.
@@ -69,4 +69,4 @@ The supplied Section 2.7 overview also contains a workflow panel. It is a plotti
 
 ## Refactoring boundaries
 
-The release organizes scripts under `experiments/section_2_*`, adds the common `run.py` entry point, removes narrative comments/docstrings, standardizes data/result paths, and fixes the inverted `--with_ablation` switch. Numerical model definitions, learned parameter keys, training losses, checkpoint selection, perturbation construction and metric calculations are retained from the supplied code. Architecture/protocol identifiers remain unchanged for checkpoint compatibility.
+The release organizes scripts under `experiments/section_2_*`, adds the common `run.py` entry point, removes narrative comments/docstrings, standardizes data/result paths, fixes the inverted `--with_ablation` switch, and sets the multi-seed defaults to `2026,2027,2028`. Numerical model definitions, learned parameter keys, training losses, checkpoint selection, perturbation construction and metric calculations are retained from the supplied code. Architecture/protocol identifiers remain unchanged for checkpoint compatibility.

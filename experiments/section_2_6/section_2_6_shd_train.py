@@ -437,7 +437,7 @@ def build_shd_datasets(cfg: SHDConfig):
     if n_train == 0 or n_test == 0:
         raise RuntimeError(
             f"Loaded SHD event dataset is empty (train={n_train}, test={n_test}). "
-            f"Check that {Path(cfg.data_root) / 'events_h5'} contains shd_train.h5 and shd_test.h5."
+            f"Check that {Path(cfg.data_root) / 'extract'} contains shd_train.h5 and shd_test.h5."
         )
     print(f"[SHD] Loaded event dataset: train={n_train}, test={n_test}; on-the-fly frames T={cfg.T}, W={cfg.input_dim}, split_by={cfg.split_by}")
     return official_train, test_set
