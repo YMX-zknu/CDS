@@ -95,6 +95,7 @@ python run.py calcium
 python run.py selectivity
 python run.py lif
 python run.py sequences
+python run.py mechanism-boundary --mode audit --device cpu
 ```
 
 | Command | Manuscript section | Analysis | Output directory |
@@ -104,8 +105,15 @@ python run.py sequences
 | `selectivity` | 2.3 | Context-dependent transmission | `results/section_2_3/` |
 | `lif` | 2.4 | Coupled CDS–LIF responses | `results/section_2_4/` |
 | `sequences` | 2.5 | Sequence preservation under perturbations | `results/section_2_5/` |
+| `mechanism-boundary` | Direction test | Local-history versus task-relevance boundary | `results/mechanism_boundary/` |
 
 The scripts export figures and CSV source data, including tables suitable for Origin. They retain the numerical definitions of the supplied experiments.
+
+The controlled direction experiment first matches relevant and distractor event counts and
+amplitudes exactly, then varies whether local temporal repetition is aligned with, independent
+of, or opposed to task relevance. It includes a non-training transmission audit and an optional
+small contextual SNN test. See [the mechanism-boundary protocol](docs/mechanism_boundary_experiment.md)
+for hypotheses, commands, outputs and the decision rule.
 
 ## 5. Train the sensory-task models
 

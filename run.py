@@ -23,6 +23,10 @@ COMMANDS = {
     "analyze-shd": ("section_2_7/section_2_7_shd_analysis.py", "Analyze SHD checkpoints"),
     "analyze-stmnist": ("section_2_7/section_2_7_stmnist_analysis.py", "Analyze ST-MNIST checkpoints"),
     "plot-propagation": ("section_2_7/section_2_7_multimodal_plot.py", "Plot propagation metrics from CSV files"),
+    "mechanism-boundary": (
+        "mechanism_boundary/context_relevance_boundary.py",
+        "Test when local synaptic history agrees with task relevance",
+    ),
 }
 MECHANISM_COMMANDS = ("synapse", "calcium", "selectivity", "lif", "sequences")
 
