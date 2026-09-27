@@ -30,6 +30,8 @@ jobs:
         run: python scripts/check_environment.py
       - name: Run regression checks
         run: python -m unittest discover -s tests -v
+      - name: Exercise mechanism-boundary experiment
+        run: python run.py mechanism-boundary --quick --device cpu --out_dir results/mechanism_boundary_smoke
       - name: Exercise synthetic training and analysis
         run: python scripts/smoke_test.py
       - name: Exercise all twelve TIFF exports
